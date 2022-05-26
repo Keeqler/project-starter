@@ -1,11 +1,17 @@
 import { Router } from 'express'
 
-import { confirmUser, createUser, requestUserPasswordReset } from '@api/controllers/user.controller'
+import {
+  confirmUser,
+  createUser,
+  requestPasswordReset,
+  resetPassword,
+} from '@api/controllers/user.controller'
 import { applySchemas } from '@api/middleware/input-validator'
 import {
   confirmUserSchemas,
   createUserSchemas,
-  requestUserPasswordResetSchemas,
+  requestPasswordResetSchemas,
+  resetPasswordSchemas,
 } from '@common/validators/user.validators'
 
 export const routes = Router()
@@ -13,7 +19,8 @@ export const routes = Router()
 routes.post('/users', applySchemas(createUserSchemas), createUser)
 routes.post('/users/activate', applySchemas(confirmUserSchemas), confirmUser)
 routes.post(
-  '/users/request-password-reset',
-  applySchemas(requestUserPasswordResetSchemas),
-  requestUserPasswordReset,
+  '/users/password-reset-request',
+  applySchemas(requestPasswordResetSchemas),
+  requestPasswordReset,
 )
+routes.post('/users/password-reset', applySchemas(resetPasswordSchemas), resetPassword)

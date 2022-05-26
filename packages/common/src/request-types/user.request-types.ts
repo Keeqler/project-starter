@@ -19,7 +19,15 @@ export enum ConfirmUserErrors {
 
 // Request user password reset
 
-export type RequestUserPasswordResetBody = { email: string }
-export enum RequestUserPasswordResetErrors {
+export type RequestPasswordResetBody = { email: string }
+export enum RequestPasswordResetErrors {
   userNotFound = 'UserNotFound',
+}
+
+// User password reset
+
+export type ResetPasswordBody = { email: string; password: string; passwordResetToken: string }
+export enum ResetPasswordErrors {
+  userNotFound = 'UserNotFound',
+  invalidPasswordResetToken = 'InvalidPasswordResetToken',
 }

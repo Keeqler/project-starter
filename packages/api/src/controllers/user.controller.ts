@@ -14,8 +14,10 @@ import {
   CreateUserErrors,
   CreateUserRes,
   CreateUserBody,
-  RequestUserPasswordResetBody,
-  RequestUserPasswordResetErrors,
+  RequestPasswordResetBody,
+  RequestPasswordResetErrors,
+  ResetPasswordBody,
+  ResetPasswordErrors,
 } from '@common/request-types/user.request-types'
 
 const randomBytes = util.promisify(crypto.randomBytes)
@@ -26,9 +28,6 @@ export async function createUser(
 ) {
   const { email, password } = req.body
 
-  // It's very unlikely that an user will try to register using a taken email
-  // so I think it's a good idea to begin hashing the password before querying for a taken email.
-  const hashedPassword = bcrypt.hash(password, 10)
   const emailIsTaken = await prisma.user.findFirst({ where: { email } })
 
   if (emailIsTaken) {
@@ -40,7 +39,7 @@ export async function createUser(
   const user = await prisma.user.create({
     data: {
       email,
-      password: await hashedPassword,
+      password: await bcrypt.hash(password, 10),
       confirmationToken,
     },
     select: {
@@ -63,7 +62,10 @@ export async function createUser(
   res.status(201).send(user)
 }
 
-export async function confirmUser(req: Request<ConfirmUserBody>, res: Response<ConfirmUserRes>) {
+export async function confirmUser(
+  req: Request<{}, {}, ConfirmUserBody>,
+  res: Response<ConfirmUserRes>,
+) {
   const { confirmationToken } = req.body
 
   try {
@@ -79,8 +81,8 @@ export async function confirmUser(req: Request<ConfirmUserBody>, res: Response<C
   }
 }
 
-export async function requestUserPasswordReset(
-  req: Request<RequestUserPasswordResetBody>,
+export async function requestPasswordReset(
+  req: Request<{}, {}, RequestPasswordResetBody>,
   res: Response,
 ) {
   const { email } = req.body
@@ -90,16 +92,40 @@ export async function requestUserPasswordReset(
   try {
     await prisma.user.update({
       where: { email },
-      data: { passwordResetToken: await bcrypt.hash(passwordResetToken, 8) },
+      data: { passwordResetToken: await bcrypt.hash(passwordResetToken, 7) },
     })
   } catch {
-    throw new HttpError(404, RequestUserPasswordResetErrors.userNotFound)
+    throw new HttpError(404, RequestPasswordResetErrors.userNotFound)
   }
 
   sendMail({
     to: email,
     subject: 'Password reset link',
     text: passwordResetToken,
+  })
+
+  res.send()
+}
+
+export async function resetPassword(req: Request<{}, {}, ResetPasswordBody>, res: Response) {
+  const { email, passwordResetToken, password } = req.body
+
+  const user = await prisma.user.findFirst({ where: { email } })
+
+  if (!user) {
+    throw new HttpError(404, ResetPasswordErrors.userNotFound)
+  }
+
+  if (
+    !user.passwordResetToken ||
+    !(await bcrypt.compare(passwordResetToken, user.passwordResetToken))
+  ) {
+    throw new HttpError(422, ResetPasswordErrors.invalidPasswordResetToken)
+  }
+
+  await prisma.user.update({
+    where: { email },
+    data: { password: await bcrypt.hash(password, 10), passwordResetToken: null },
   })
 
   res.send()
