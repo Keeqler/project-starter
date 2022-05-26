@@ -1,0 +1,12 @@
+{
+  "name": "project-starter",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "private": "true",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "compose:up": "docker-compose -f docker-compose.dev.yml up -d",
+    "compose:down": "docker-compose -f docker-compose.dev.yml down"
+  }
+}

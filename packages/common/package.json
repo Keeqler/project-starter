@@ -1,0 +1,11 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "dependencies": {
+    "@prisma/client": "^3.14.0",
+    "prisma": "^3.14.0",
+    "yup": "^0.32.11"
+  }
+}
