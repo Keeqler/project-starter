@@ -7,4 +7,4 @@ import { confirmUserSchemas, createUserSchemas } from '@common/validators/user.v
 export const routes = Router()
 
 routes.post('/users', applySchemas(createUserSchemas), createUser)
-routes.post('/users/activate/:confirmationToken', applySchemas(confirmUserSchemas), confirmUser)
+routes.post('/users/activate', applySchemas(confirmUserSchemas), confirmUser)

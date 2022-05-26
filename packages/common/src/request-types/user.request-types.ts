@@ -11,7 +11,7 @@ export enum CreateUserErrors {
 
 // Confirm user
 
-export type ConfirmUserParams = { confirmationToken: string }
+export type ConfirmUserBody = { confirmationToken: string }
 export type ConfirmUserRes = { email: string }
 export enum ConfirmUserErrors {
   invalidConfirmationToken = 'InvalidConfirmationToken',

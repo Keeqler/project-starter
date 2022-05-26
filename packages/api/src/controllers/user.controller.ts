@@ -10,7 +10,7 @@ import { prisma } from '@common/prisma'
 import {
   ConfirmUserErrors,
   ConfirmUserRes,
-  ConfirmUserParams,
+  ConfirmUserBody,
   CreateUserErrors,
   CreateUserRes,
   CreateUserBody,
@@ -61,8 +61,8 @@ export async function createUser(
   res.status(201).send(user)
 }
 
-export async function confirmUser(req: Request<ConfirmUserParams>, res: Response<ConfirmUserRes>) {
-  const { confirmationToken } = req.params
+export async function confirmUser(req: Request<ConfirmUserBody>, res: Response<ConfirmUserRes>) {
+  const { confirmationToken } = req.body
 
   try {
     const user = await prisma.user.update({
