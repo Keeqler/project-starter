@@ -12,6 +12,6 @@ export const mailer = nodemailer.createTransport({
 
 export const sendMail = (options: Mail.Options) =>
   mailer.sendMail({
-    sender: process.env.SMTP_SENDER,
+    from: process.env.SMTP_SENDER,
     ...options,
   })

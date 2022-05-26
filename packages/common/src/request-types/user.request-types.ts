@@ -5,7 +5,14 @@ import { User } from '@prisma/client'
 
 export type CreateUserBody = Pick<User, 'email' | 'password'>
 export type CreateUserRes = Pick<User, 'id' | 'email' | 'isAdmin' | 'createdAt' | 'updatedAt'>
-
 export enum CreateUserErrors {
-  EmailIsTaken = 'EmailIsTaken',
+  emailIsTaken = 'EmailIsTaken',
+}
+
+// Confirm user
+
+export type ConfirmUserParams = { confirmationToken: string }
+export type ConfirmUserRes = { email: string }
+export enum ConfirmUserErrors {
+  invalidConfirmationToken = 'InvalidConfirmationToken',
 }

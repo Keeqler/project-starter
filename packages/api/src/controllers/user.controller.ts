@@ -8,9 +8,12 @@ import { sendMail } from '@api/services/mailer'
 import { BUSINESS_NAME } from '@api/constants'
 import { prisma } from '@common/prisma'
 import {
-  CreateUserBody,
+  ConfirmUserErrors,
+  ConfirmUserRes,
+  ConfirmUserParams,
   CreateUserErrors,
   CreateUserRes,
+  CreateUserBody,
 } from '@common/request-types/user.request-types'
 
 const randomBytes = util.promisify(crypto.randomBytes)
@@ -27,7 +30,7 @@ export async function createUser(
   const emailIsTaken = await prisma.user.findFirst({ where: { email } })
 
   if (emailIsTaken) {
-    throw new HttpError(422, CreateUserErrors.EmailIsTaken)
+    throw new HttpError(422, CreateUserErrors.emailIsTaken)
   }
 
   const confirmationToken = (await randomBytes(32)).toString('hex')
@@ -56,4 +59,20 @@ export async function createUser(
   // TODO: shouldn't the compiler complain when "password" is included in the body?
   // for some reason that currently won't happen
   res.status(201).send(user)
+}
+
+export async function confirmUser(req: Request<ConfirmUserParams>, res: Response<ConfirmUserRes>) {
+  const { confirmationToken } = req.params
+
+  try {
+    const user = await prisma.user.update({
+      where: { confirmationToken },
+      data: { confirmationToken: null },
+      select: { email: true },
+    })
+
+    res.send(user)
+  } catch {
+    throw new HttpError(422, ConfirmUserErrors.invalidConfirmationToken)
+  }
 }
