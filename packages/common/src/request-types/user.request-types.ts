@@ -16,3 +16,10 @@ export type ConfirmUserRes = { email: string }
 export enum ConfirmUserErrors {
   invalidConfirmationToken = 'InvalidConfirmationToken',
 }
+
+// Request user password reset
+
+export type RequestUserPasswordResetBody = { email: string }
+export enum RequestUserPasswordResetErrors {
+  userNotFound = 'UserNotFound',
+}

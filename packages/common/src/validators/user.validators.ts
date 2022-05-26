@@ -1,7 +1,11 @@
 import * as yup from 'yup'
 
 import { RequestSchemas } from '@common/types'
-import { ConfirmUserBody, CreateUserBody } from '@common/request-types/user.request-types'
+import {
+  ConfirmUserBody,
+  CreateUserBody,
+  RequestUserPasswordResetBody,
+} from '@common/request-types/user.request-types'
 
 export const createUserSchemas: RequestSchemas<CreateUserBody> = {
   body: yup.object().shape({
@@ -10,8 +14,14 @@ export const createUserSchemas: RequestSchemas<CreateUserBody> = {
   }),
 }
 
-export const confirmUserSchemas: RequestSchemas<{}, ConfirmUserBody> = {
+export const confirmUserSchemas: RequestSchemas<ConfirmUserBody> = {
   body: yup.object().shape({
     confirmationToken: yup.string().required().length(64),
+  }),
+}
+
+export const requestUserPasswordResetSchemas: RequestSchemas<RequestUserPasswordResetBody> = {
+  body: yup.object().shape({
+    email: yup.string().required().email().trim().lowercase(),
   }),
 }

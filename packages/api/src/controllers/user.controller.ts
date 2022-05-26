@@ -14,6 +14,8 @@ import {
   CreateUserErrors,
   CreateUserRes,
   CreateUserBody,
+  RequestUserPasswordResetBody,
+  RequestUserPasswordResetErrors,
 } from '@common/request-types/user.request-types'
 
 const randomBytes = util.promisify(crypto.randomBytes)
@@ -75,4 +77,30 @@ export async function confirmUser(req: Request<ConfirmUserBody>, res: Response<C
   } catch {
     throw new HttpError(422, ConfirmUserErrors.invalidConfirmationToken)
   }
+}
+
+export async function requestUserPasswordReset(
+  req: Request<RequestUserPasswordResetBody>,
+  res: Response,
+) {
+  const { email } = req.body
+
+  const passwordResetToken = (await randomBytes(32)).toString('hex')
+
+  try {
+    await prisma.user.update({
+      where: { email },
+      data: { passwordResetToken: await bcrypt.hash(passwordResetToken, 8) },
+    })
+  } catch {
+    throw new HttpError(404, RequestUserPasswordResetErrors.userNotFound)
+  }
+
+  sendMail({
+    to: email,
+    subject: 'Password reset link',
+    text: passwordResetToken,
+  })
+
+  res.send()
 }
