@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { User } from '@prisma/client'
 
 // Create user

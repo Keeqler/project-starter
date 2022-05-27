@@ -116,10 +116,10 @@ export async function resetPassword(req: Request<{}, {}, ResetPasswordBody>, res
     throw new HttpError(404, ResetPasswordErrors.userNotFound)
   }
 
-  if (
-    !user.passwordResetToken ||
-    !(await bcrypt.compare(passwordResetToken, user.passwordResetToken))
-  ) {
+  const resetTokenIsValid =
+    user.passwordResetToken && (await bcrypt.compare(passwordResetToken, user.passwordResetToken))
+
+  if (!resetTokenIsValid) {
     throw new HttpError(422, ResetPasswordErrors.invalidPasswordResetToken)
   }
 

@@ -6,6 +6,7 @@ import {
   requestPasswordReset,
   resetPassword,
 } from '@api/controllers/user.controller'
+import { login } from '@api/controllers/auth.controller'
 import { applySchemas } from '@api/middleware/input-validator'
 import {
   confirmUserSchemas,
@@ -13,6 +14,7 @@ import {
   requestPasswordResetSchemas,
   resetPasswordSchemas,
 } from '@common/validators/user.validators'
+import { loginSchemas } from '@common/validators/auth.validators'
 
 export const routes = Router()
 
@@ -24,3 +26,5 @@ routes.post(
   requestPasswordReset,
 )
 routes.post('/users/password-reset', applySchemas(resetPasswordSchemas), resetPassword)
+
+routes.post('/auth', applySchemas(loginSchemas), login)
