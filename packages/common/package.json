@@ -5,6 +5,7 @@
   "author": "",
   "dependencies": {
     "@prisma/client": "^3.14.0",
+    "jsonwebtoken": "^8.5.1",
     "prisma": "^3.14.0",
     "yup": "^0.32.11"
   }

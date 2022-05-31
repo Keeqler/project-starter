@@ -6,8 +6,9 @@ import morgan from 'morgan'
 import cors from 'cors'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
+import cookies from 'cookie-parser'
 
-import { errorHandler } from '@api/middleware/error-handler'
+import { errorHandler } from '@api/middleware/error-handler.middleware'
 import { routes } from '@api/routes'
 
 import '@api/aliases'
@@ -26,6 +27,7 @@ app.use(
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }))
 app.use(helmet())
 app.use(express.json())
+app.use(cookies())
 app.use(routes)
 app.use(errorHandler)
 

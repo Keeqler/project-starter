@@ -1,7 +1,11 @@
-import { User } from '@prisma/client'
+import { REFRESH_TOKEN_COOKIE_NAME } from '@common/constants'
+import { JwtPayload } from '@common/types'
 
 declare module 'express' {
   export interface Request {
-    user?: User
+    jwtPayload?: JwtPayload
+    cookies: {
+      [REFRESH_TOKEN_COOKIE_NAME]?: string
+    }
   }
 }

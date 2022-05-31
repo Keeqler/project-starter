@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import util from 'util'
 
-import { HttpError } from '@api/middleware/error-handler'
+import { HttpError } from '@api/middleware/error-handler.middleware'
 import { sendMail } from '@api/services/mailer'
 import { BUSINESS_NAME } from '@api/constants'
 import { prisma } from '@common/prisma'

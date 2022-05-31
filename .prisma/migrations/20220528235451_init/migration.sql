@@ -3,9 +3,10 @@ CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
     "password" CHAR(60) NOT NULL,
+    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
+    "tokenVersion" INTEGER NOT NULL DEFAULT 0,
     "confirmationToken" CHAR(64),
     "passwordResetToken" CHAR(60),
-    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

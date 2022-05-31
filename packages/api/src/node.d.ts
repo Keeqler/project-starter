@@ -5,7 +5,8 @@ declare namespace NodeJS {
     API_PORT: string
     WEB_URL: string
     DATABASE_URL: string
-    JWT_SECRET: string
+    ACCESS_TOKEN_SECRET: string
+    REFRESH_TOKEN_SECRET: string
     SMTP_HOST: string
     SMTP_PORT: string
     SMTP_USER: string

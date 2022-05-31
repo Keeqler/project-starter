@@ -1,5 +1,6 @@
-import * as yup from 'yup'
 import { User } from '@prisma/client'
+import * as yup from 'yup'
+import jwt from 'jsonwebtoken'
 
 export type RequestSchemas<Body, Params = any, Query = any> = {
   params?: yup.ObjectSchema<Record<keyof Params, yup.AnySchema>>
@@ -7,6 +8,9 @@ export type RequestSchemas<Body, Params = any, Query = any> = {
   body?: yup.ObjectSchema<Record<keyof Body, yup.AnySchema>>
 }
 
-export type JwtPayload = Pick<User, 'id' | 'email' | 'createdAt' | 'updatedAt'> & {
-  isAdmin?: string
-}
+export type JwtPayloadWithoutDefaults = Pick<
+  User,
+  'id' | 'email' | 'tokenVersion' | 'createdAt' | 'updatedAt'
+> & { isAdmin?: string }
+
+export type JwtPayload = JwtPayloadWithoutDefaults & jwt.JwtPayload
