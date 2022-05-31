@@ -18,7 +18,11 @@ import {
   RequestPasswordResetErrors,
   ResetPasswordBody,
   ResetPasswordErrors,
+  UpdateUserParams,
+  UpdateUserBody,
+  UpdateUserErrors,
 } from '@common/request-types/user.request-types'
+import { User } from '@prisma/client'
 
 const randomBytes = util.promisify(crypto.randomBytes)
 
@@ -79,6 +83,62 @@ export async function confirmUser(
   } catch {
     throw new HttpError(422, ConfirmUserErrors.invalidConfirmationToken)
   }
+}
+
+export async function updateUser(
+  req: Request<UpdateUserParams, {}, UpdateUserBody>,
+  res: Response,
+) {
+  const id = Number(req.params.id)
+  const { email, password, currentPassword } = req.body
+
+  if (!req.jwtPayload) {
+    console.log('here')
+    throw new HttpError(500)
+  }
+
+  if (Number(id) !== req.jwtPayload.id) {
+    throw new HttpError(403)
+  }
+
+  const user = await prisma.user.findFirst({
+    where: { id },
+    select: { password: true, tokenVersion: true },
+  })
+
+  if (!user) {
+    throw new HttpError(500)
+  }
+
+  const data: Partial<Pick<User, 'email' | 'password' | 'tokenVersion'>> = {}
+
+  if (email) {
+    const emailIsTaken = !!(await prisma.user.findFirst({ where: { email } }))
+
+    if (emailIsTaken) {
+      throw new HttpError(422, UpdateUserErrors.emailIsTaken)
+    }
+
+    data.email = email
+  }
+
+  if (password && currentPassword) {
+    const passwordsMatch = await bcrypt.compare(currentPassword, user.password)
+
+    if (!passwordsMatch) {
+      throw new HttpError(422, UpdateUserErrors.invalidCurrentPassword)
+    }
+
+    data.password = await bcrypt.hash(password, 10)
+  }
+
+  if (email || password) {
+    data.tokenVersion = user.tokenVersion + 1
+  }
+
+  await prisma.user.update({ where: { id }, data })
+
+  res.send(204)
 }
 
 export async function requestPasswordReset(

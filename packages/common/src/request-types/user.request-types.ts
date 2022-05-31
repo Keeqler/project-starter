@@ -16,6 +16,17 @@ export enum ConfirmUserErrors {
   invalidConfirmationToken = 'InvalidConfirmationToken',
 }
 
+// Update user
+
+export type UpdateUserParams = { id: string }
+export type UpdateUserBody = Partial<Pick<User, 'email' | 'password'>> & {
+  currentPassword?: string
+}
+export enum UpdateUserErrors {
+  emailIsTaken = 'EmailIsTaken',
+  invalidCurrentPassword = 'InvalidCurrentPassword',
+}
+
 // Request user password reset
 
 export type RequestPasswordResetBody = { email: string }

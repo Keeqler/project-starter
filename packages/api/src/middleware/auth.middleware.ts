@@ -39,5 +39,7 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
     throw new HttpError(401, 'Invalid access token.')
   }
 
+  req.jwtPayload = payload
+
   next()
 }

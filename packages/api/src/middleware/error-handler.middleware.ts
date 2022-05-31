@@ -29,7 +29,7 @@ export async function errorHandler(
       errors[(valError.path as string) || (valError.type as string)] = valError.errors
     })
 
-    return res.status(400).send(errors)
+    return res.status(422).send(errors)
   }
 
   if (process.env.NODE_ENV === 'development') {

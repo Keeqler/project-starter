@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import * as yup from 'yup'
+import { HttpError } from './error-handler.middleware'
 
 type RequestSchemas = {
   params?: yup.ObjectSchema<Record<string, yup.AnySchema>>
@@ -17,7 +18,7 @@ export function applySchemas(schemas: RequestSchemas) {
         let input: Record<string, unknown> = req[inputName]
 
         if (!input || !Object.keys(input).length) {
-          return res.status(400).send({ error: `Request ${inputName} missing.` })
+          throw new HttpError(422, `Request ${inputName} is missing.`)
         }
 
         input = schema.cast(input, { assert: false, stripUnknown: true })
