@@ -6,3 +6,5 @@ export const USER_JWT_PAYLOAD_KEYS = [
   'createdAt',
   'updatedAt',
 ] as const
+
+export const ADMIN_JWT_PAYLOAD_KEYS = [...USER_JWT_PAYLOAD_KEYS, 'isAdmin'] as const

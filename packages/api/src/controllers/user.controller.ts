@@ -21,6 +21,8 @@ import {
   UpdateUserParams,
   UpdateUserBody,
   UpdateUserErrors,
+  UpdateUserAsAdminParams,
+  UpdateUserAsAdminBody,
 } from '@common/request-types/user.request-types'
 import { User } from '@prisma/client'
 
@@ -93,7 +95,6 @@ export async function updateUser(
   const { email, password, currentPassword } = req.body
 
   if (!req.jwtPayload) {
-    console.log('here')
     throw new HttpError(500)
   }
 
@@ -129,6 +130,47 @@ export async function updateUser(
       throw new HttpError(422, UpdateUserErrors.invalidCurrentPassword)
     }
 
+    data.password = await bcrypt.hash(password, 10)
+  }
+
+  if (email || password) {
+    data.tokenVersion = user.tokenVersion + 1
+  }
+
+  await prisma.user.update({ where: { id }, data })
+
+  res.send(204)
+}
+
+export async function updateUserAsAdmin(
+  req: Request<UpdateUserAsAdminParams, {}, UpdateUserAsAdminBody>,
+  res: Response,
+) {
+  const id = Number(req.params.id)
+  const { email, password } = req.body
+
+  const user = await prisma.user.findFirst({
+    where: { id },
+    select: { password: true, tokenVersion: true },
+  })
+
+  if (!user) {
+    throw new HttpError(404, 'User not found')
+  }
+
+  const data: Partial<Pick<User, 'email' | 'password' | 'tokenVersion'>> = {}
+
+  if (email) {
+    const emailIsTaken = !!(await prisma.user.findFirst({ where: { email } }))
+
+    if (emailIsTaken) {
+      throw new HttpError(422, UpdateUserErrors.emailIsTaken)
+    }
+
+    data.email = email
+  }
+
+  if (password) {
     data.password = await bcrypt.hash(password, 10)
   }
 

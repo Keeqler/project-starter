@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 import { HttpError } from '@api/middleware/error-handler.middleware'
-import { USER_JWT_PAYLOAD_KEYS } from '@api/constants'
+import { ADMIN_JWT_PAYLOAD_KEYS, USER_JWT_PAYLOAD_KEYS } from '@api/constants'
 import {
   LoginBody,
   LoginErrors,
@@ -41,7 +41,13 @@ export async function login(req: Request<{}, {}, LoginBody>, res: Response<Login
     throw new HttpError(422, LoginErrors.invalidCredentials)
   }
 
-  const jwtPayload: JwtPayloadWithoutDefaults = pick(user, USER_JWT_PAYLOAD_KEYS)
+  let jwtPayload: JwtPayloadWithoutDefaults
+
+  if (user.isAdmin) {
+    jwtPayload = pick(user, ADMIN_JWT_PAYLOAD_KEYS)
+  } else {
+    jwtPayload = pick(user, USER_JWT_PAYLOAD_KEYS)
+  }
 
   const accessToken = jwt.sign(jwtPayload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
   const refreshToken = jwt.sign(jwtPayload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' })

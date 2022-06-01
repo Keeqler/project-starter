@@ -6,6 +6,8 @@ import {
   CreateUserBody,
   RequestPasswordResetBody,
   ResetPasswordBody,
+  UpdateUserAsAdminBody,
+  UpdateUserAsAdminParams,
   UpdateUserBody,
   UpdateUserParams,
 } from '@common/request-types/user.request-types'
@@ -52,6 +54,19 @@ export const updateUserSchemas: RequestSchemas<UpdateUserBody, UpdateUserParams>
       ['password', 'currentPassword'],
     ],
   ),
+}
+
+export const updateUserAsAdminSchemas: RequestSchemas<
+  UpdateUserAsAdminBody,
+  UpdateUserAsAdminParams
+> = {
+  params: yup.object().shape({
+    id: yup.number().required(),
+  }),
+  body: yup.object().shape({
+    email: yup.string().email().trim().lowercase(),
+    password: yup.string().min(8).max(100),
+  }),
 }
 
 export const requestPasswordResetSchemas: RequestSchemas<RequestPasswordResetBody> = {

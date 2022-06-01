@@ -11,6 +11,7 @@ export type RequestSchemas<Body, Params = any, Query = any> = {
 export type JwtPayloadWithoutDefaults = Pick<
   User,
   'id' | 'email' | 'tokenVersion' | 'createdAt' | 'updatedAt'
-> & { isAdmin?: string }
+> &
+  Partial<Pick<User, 'isAdmin'>>
 
 export type JwtPayload = JwtPayloadWithoutDefaults & jwt.JwtPayload

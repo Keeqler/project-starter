@@ -27,6 +27,14 @@ export enum UpdateUserErrors {
   invalidCurrentPassword = 'InvalidCurrentPassword',
 }
 
+// Update user
+
+export type UpdateUserAsAdminParams = { id: string }
+export type UpdateUserAsAdminBody = Partial<Pick<User, 'email' | 'password'>>
+export enum UpdateUserAsAdminErrors {
+  emailIsTaken = 'EmailIsTaken',
+}
+
 // Request user password reset
 
 export type RequestPasswordResetBody = { email: string }
