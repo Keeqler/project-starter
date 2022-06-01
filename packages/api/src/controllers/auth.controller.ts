@@ -26,6 +26,7 @@ export async function login(req: Request<{}, {}, LoginBody>, res: Response<Login
       password: true,
       isAdmin: true,
       tokenVersion: true,
+      confirmationToken: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -33,6 +34,10 @@ export async function login(req: Request<{}, {}, LoginBody>, res: Response<Login
 
   if (!user) {
     throw new HttpError(422, LoginErrors.invalidCredentials)
+  }
+
+  if (user.confirmationToken) {
+    throw new HttpError(403, LoginErrors.unconfirmedUser)
   }
 
   const passwordIsValid = await bcrypt.compare(password, user.password)

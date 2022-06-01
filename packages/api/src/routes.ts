@@ -25,7 +25,7 @@ import { adminOnly } from './middleware/admin-only.middleware'
 export const routes = Router()
 
 routes.post('/users', applySchemas(createUserSchemas), createUser)
-routes.post('/users/activate', applySchemas(confirmUserSchemas), confirmUser)
+routes.post('/users/confirm', applySchemas(confirmUserSchemas), confirmUser)
 routes.post(
   '/users/password-reset-request',
   applySchemas(requestPasswordResetSchemas),
